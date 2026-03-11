@@ -1,3 +1,5 @@
+import { useAuthStore } from '~/stores/auth'
+
 export const useTickets = () => {
   const ticketStore = useTicketStore()
   const { $api } = useNuxtApp()
@@ -49,9 +51,18 @@ export const useTickets = () => {
     }
   }
   
-  const createTicket = async (ticketData: Partial<Ticket>) => {
+  // Accept object or FormData (attachments)
+  const createTicket = async (ticketData: Partial<Ticket> | FormData) => {
     ticketStore.setLoading(true)
     try {
+      if (ticketData instanceof FormData) {
+        const authStore = useAuthStore()
+        if (authStore.token) {
+          // include token as field so backend can fallback when header missing
+          ticketData.append('token', authStore.token)
+        }
+      }
+
       const newTicket = await $api<Ticket>('/tickets', {
         method: 'POST',
         body: ticketData,
