@@ -1,35 +1,46 @@
+import { useAuthStore } from '~/stores/auth'
+
 export const useTickets = () => {
   const ticketStore = useTicketStore()
   const { $api } = useNuxtApp()
-  
- const fetchTickets = async () => {
-  ticketStore.setLoading(true)
-  try {
-    const response = await $api('/tickets', {
-      method: 'GET',
-      credentials: 'include'  // ← AJOUTEZ CETTE LIGNE
-    })
 
-    // some endpoints return a paginated object { content: [...], totalPages,... }
-    // while dashboard only cares about the raw list. Normalize it here.
-    const tickets = Array.isArray(response)
-      ? response
-      : response.content || []
-
-    ticketStore.setTickets(tickets)
-  } catch (error) {
-    console.error('Error fetching tickets:', error)
-  } finally {
-    ticketStore.setLoading(false)
+  interface Ticket {
+    id: string
+    title: string
+    description: string
+    [key: string]: any
   }
-}
 
+  type Paginated<T> = { content: T[]; totalPages?: number }
 
-  
-  const fetchTicketById = async (id) => {
+  const fetchTickets = async () => {
     ticketStore.setLoading(true)
     try {
-      const ticket = await $api(`/tickets/${id}`)
+      const response = await $api<Ticket[] | Paginated<Ticket>>('/tickets', {
+        method: 'GET',
+        credentials: 'include' // ← AJOUTEZ CETTE LIGNE
+      })
+
+      // some endpoints return a paginated object { content: [...], totalPages,... }
+      // while dashboard only cares about the raw list. Normalize it here.
+      const tickets: Ticket[] = Array.isArray(response)
+        ? response
+        : (response.content || []) as Ticket[]
+
+      ticketStore.setTickets(tickets)
+    } catch (error) {
+      console.error('Error fetching tickets:', error)
+    } finally {
+      ticketStore.setLoading(false)
+    }
+  }
+
+
+  
+  const fetchTicketById = async (id: string) => {
+    ticketStore.setLoading(true)
+    try {
+      const ticket = await $api<Ticket>(`/tickets/${id}`)
       ticketStore.setCurrentTicket(ticket)
       return ticket
     } catch (error) {
@@ -40,28 +51,38 @@ export const useTickets = () => {
     }
   }
   
-  const createTicket = async (ticketData) => {
-  ticketStore.setLoading(true)
-  try {
-    const newTicket = await $api('/tickets', {
-      method: 'POST',
-      body: ticketData,
-      credentials: 'include'  // ← AJOUTEZ CETTE LIGNE
-    })
-    ticketStore.addTicket(newTicket)
-    return { success: true, ticket: newTicket }
-  } catch (error) {
-    console.error('Error creating ticket:', error)
-    return { success: false, error: 'Failed to create ticket' }
-  } finally {
-    ticketStore.setLoading(false)
-  }
-}
-  
-  const updateTicket = async (id, ticketData) => {
+  // Accept either plain object or FormData (when attachments are present)
+  const createTicket = async (ticketData: Partial<Ticket> | FormData) => {
     ticketStore.setLoading(true)
     try {
-      const updatedTicket = await $api(`/tickets/${id}`, {
+      // if we're sending a FormData we may lose the Authorization header due to CORS preflight,
+      // append the token as a field so the backend can fall back to it if needed.
+      if (ticketData instanceof FormData) {
+        const authStore = useAuthStore()
+        if (authStore.token) {
+          ticketData.append('token', authStore.token)
+        }
+      }
+
+      const newTicket = await $api<Ticket>('/tickets', {
+        method: 'POST',
+        body: ticketData,
+        credentials: 'include'
+      })
+      ticketStore.addTicket(newTicket)
+      return { success: true, ticket: newTicket }
+    } catch (error) {
+      console.error('Error creating ticket:', error)
+      return { success: false, error: 'Failed to create ticket' }
+    } finally {
+      ticketStore.setLoading(false)
+    }
+  }
+  
+  const updateTicket = async (id: string, ticketData: Partial<Ticket>) => {
+    ticketStore.setLoading(true)
+    try {
+      const updatedTicket = await $api<Ticket>(`/tickets/${id}`, {
         method: 'PUT',
         body: ticketData
       })
@@ -75,7 +96,7 @@ export const useTickets = () => {
     }
   }
   
-  const deleteTicket = async (id) => {
+  const deleteTicket = async (id: string) => {
     ticketStore.setLoading(true)
     try {
       await $api(`/tickets/${id}`, {

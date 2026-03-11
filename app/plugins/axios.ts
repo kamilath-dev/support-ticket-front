@@ -1,3 +1,5 @@
+declare const process: any
+
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
   
@@ -6,20 +8,20 @@ export default defineNuxtPlugin((nuxtApp) => {
     onRequest({ request, options }) {
       if (process.client) {
         try {
-          const authData = localStorage.getItem('auth-storage')  // Même clé !
+          const authData = localStorage.getItem('auth-storage')
           console.log('Auth data from localStorage:', authData ? 'Présent' : 'Null')
-          
+
           if (authData) {
-            const parsed = JSON.parse(authData)
-            const token = parsed.token
-            
+            const { token } = JSON.parse(authData) as { token?: string }
             if (token) {
+              // merge headers using a loose type to avoid TS complaints
+              // `options.headers` is typed as Headers so cast to any to avoid incompatibility
               options.headers = {
-                ...options.headers,
-                'Authorization': `Bearer ${token}`,
-                'Origin': 'http://localhost:3000'
-              }
-              console.log('✅ Token envoyé')
+                ...((options.headers as unknown) as Record<string, string>),
+                Authorization: `Bearer ${token}`
+              } as any
+              console.log('✅ Token envoyé:', token.slice(0, 20), '…')
+              console.log('   headers after modification:', options.headers)
             }
           }
         } catch (e) {

@@ -153,7 +153,7 @@ const totalPages = ref(1)
 const pageSize = ref(10)
 
 const { tickets, loading, fetchTickets, deleteTicket, createTicket, updateTicket } = useTickets()
-const { $toast } = useNuxtApp()
+const { $toast, $api } = useNuxtApp()  // add $api for manual requests in this page
 
 // tiny debounce utility (could be replaced with lodash or vueuse)
 function useDebounce(fn, delay = 300) {
@@ -178,6 +178,7 @@ const loadTickets = async () => {
       priority: priorityFilter.value
     })
 
+    // use $api imported from useNuxtApp; previous error came from undefined
     const response = await $api(`/tickets?${params}`)
     ticketStore.setTickets(response.content)
     totalPages.value = response.totalPages
