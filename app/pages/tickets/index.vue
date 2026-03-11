@@ -33,6 +33,52 @@
       </button>
     </div>
 
+    <!-- Barre de recherche et filtres -->
+    <div class="mb-4 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+      <input 
+        v-model="searchQuery" 
+        type="text" 
+        placeholder="Rechercher..." 
+        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        @input="debouncedSearch"
+      >
+      
+      <select v-model="statusFilter" class="px-3 py-2 border border-gray-300 rounded-md">
+        <option value="">Tous les statuts</option>
+        <option value="OPEN">Ouvert</option>
+        <option value="IN_PROGRESS">En cours</option>
+        <option value="RESOLVED">Résolu</option>
+        <option value="CLOSED">Fermé</option>
+      </select>
+      
+      <select v-model="priorityFilter" class="px-3 py-2 border border-gray-300 rounded-md">
+        <option value="">Toutes priorités</option>
+        <option value="LOW">Basse</option>
+        <option value="MEDIUM">Moyenne</option>
+        <option value="HIGH">Haute</option>
+        <option value="CRITICAL">Critique</option>
+      </select>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4 flex items-center justify-between">
+      <button 
+        @click="changePage(currentPage - 1)" 
+        :disabled="currentPage === 0"
+        class="px-3 py-1 border rounded-md disabled:opacity-50"
+      >
+        Précédent
+      </button>
+      <span>Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+      <button 
+        @click="changePage(currentPage + 1)" 
+        :disabled="currentPage >= totalPages - 1"
+        class="px-3 py-1 border rounded-md disabled:opacity-50"
+      >
+        Suivant
+      </button>
+    </div>  
+
     <div v-if="loading" class="text-center py-4">
       Loading...
     </div>
@@ -98,13 +144,72 @@ definePageMeta({
   middleware: 'auth'
 })
 
+// search, filters and pagination state
+const searchQuery = ref('')
+const statusFilter = ref('')
+const priorityFilter = ref('')
+const currentPage = ref(0)
+const totalPages = ref(1)
+const pageSize = ref(10)
+
 const { tickets, loading, fetchTickets, deleteTicket, createTicket, updateTicket } = useTickets()
 const { $toast } = useNuxtApp()
 
+// tiny debounce utility (could be replaced with lodash or vueuse)
+function useDebounce(fn, delay = 300) {
+  let timer
+  return (...args) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => fn(...args), delay)
+  }
+}
+
+// helper to actually fetch tickets with all params; keeps page component
+// independent from the composable (you can also move this logic into useTickets)
+const loadTickets = async () => {
+  const ticketStore = useTicketStore()
+  ticketStore.setLoading(true)
+  try {
+    const params = new URLSearchParams({
+      page: currentPage.value,
+      size: pageSize.value,
+      search: searchQuery.value,
+      status: statusFilter.value,
+      priority: priorityFilter.value
+    })
+
+    const response = await $api(`/tickets?${params}`)
+    ticketStore.setTickets(response.content)
+    totalPages.value = response.totalPages
+  } catch (error) {
+    console.error('Error fetching tickets:', error)
+  } finally {
+    ticketStore.setLoading(false)
+  }
+}
+
+// debounce helper (you can import from lodash or implement your own composable)
+const debouncedSearch = useDebounce(() => {
+  currentPage.value = 0
+  loadTickets()
+}, 300)
+
+watch([statusFilter, priorityFilter], () => {
+  currentPage.value = 0
+  loadTickets()
+})
+
 onMounted(() => {
-  fetchTickets();
+  loadTickets(); // initial load with filters/pagination
   window.addEventListener('click', closeActionMenuOnClickOutside);
 })
+
+// pagination control
+const changePage = (page) => {
+  if (page < 0 || page >= totalPages.value) return
+  currentPage.value = page
+  loadTickets()
+}
 
 onUnmounted(() => {
   window.removeEventListener('click', closeActionMenuOnClickOutside);
