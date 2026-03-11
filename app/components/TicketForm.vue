@@ -29,26 +29,7 @@
       </select>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-gray-700 text-sm font-bold mb-2">
-        Attachments
-      </label>
-      <input 
-        type="file" 
-        @change="handleFileUpload" 
-        multiple 
-        accept="image/*,.pdf,.doc,.docx"
-        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-      >
-      
-      <!-- Liste des fichiers sélectionnés -->
-      <div v-if="selectedFiles.length > 0" class="mt-2">
-        <div v-for="(file, index) in selectedFiles" :key="index" class="flex items-center space-x-2 text-sm text-gray-600">
-          <span>{{ file.name }} ({{ formatFileSize(file.size) }})</span>
-          <button @click="removeFile(index)" type="button" class="text-red-600 hover:text-red-800">×</button>
-        </div>
-      </div>
-    </div>
+    <!--  -->
 
     <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-0 sm:space-x-4">
       <button type="button" @click="$emit('cancel')" class="w-full sm:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
