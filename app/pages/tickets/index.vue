@@ -271,10 +271,13 @@ const deleteAction = async (id) => {
 
 const handleFormSubmit = async (formData) => {
   const isEditing = !!editingTicket.value
-  const action = isEditing ? updateTicket : createTicket
-  const payload = isEditing ? { ...formData, id: editingTicket.value.id } : formData
+  let result
 
-  const result = await action(payload)
+  if (isEditing) {
+    result = await updateTicket(editingTicket.value.id, formData)
+  } else {
+    result = await createTicket(formData)
+  }
 
   if (result.success) {
     $toast.success(`Ticket ${isEditing ? 'mis à jour' : 'créé'} avec succès!`)
