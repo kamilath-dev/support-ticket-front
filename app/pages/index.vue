@@ -156,7 +156,8 @@ const handleCreateTicket = async (formData) => {
 }
 
 const openTickets = computed(() => {
-  return tickets.value.filter(t => t.status === 'OPEN').length
+  const list = Array.isArray(tickets.value) ? tickets.value : []
+  return list.filter(t => t.status === 'OPEN').length
 })
 
 const recentTickets = computed(() => {
@@ -166,7 +167,8 @@ const recentTickets = computed(() => {
 })
 
 const highPriorityTickets = computed(() => {
-  return tickets.value.filter(t => t.priority === 'HIGH' || t.priority === 'CRITICAL').length
+  const list = Array.isArray(tickets.value) ? tickets.value : []
+  return list.filter(t => t.priority === 'HIGH' || t.priority === 'CRITICAL').length
 })
 
 const statusClass = (status) => {

@@ -5,10 +5,17 @@ export const useTickets = () => {
  const fetchTickets = async () => {
   ticketStore.setLoading(true)
   try {
-    const tickets = await $api('/tickets', {
+    const response = await $api('/tickets', {
       method: 'GET',
       credentials: 'include'  // ← AJOUTEZ CETTE LIGNE
     })
+
+    // some endpoints return a paginated object { content: [...], totalPages,... }
+    // while dashboard only cares about the raw list. Normalize it here.
+    const tickets = Array.isArray(response)
+      ? response
+      : response.content || []
+
     ticketStore.setTickets(tickets)
   } catch (error) {
     console.error('Error fetching tickets:', error)
