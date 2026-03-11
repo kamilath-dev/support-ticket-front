@@ -23,63 +23,98 @@
     </div>
 
     <!-- Stats cards -->
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <!-- Card 1: Total Tickets -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 p-6 text-white shadow-lg">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4">
+            <svg class="h-24 w-24 text-white opacity-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+            </svg>
+        </div>
+        <div class="relative">
+            <dt>
+                <p class="text-sm font-medium uppercase tracking-wider">Total des Tickets</p>
+            </dt>
+            <dd class="mt-2 flex items-baseline pb-6 sm:pb-7">
+                <p class="text-4xl font-semibold">{{ tickets.length }}</p>
+            </dd>
+        </div>
+        <div class="absolute bottom-0 inset-x-0 bg-black bg-opacity-10 px-4 py-2">
+            <div class="text-sm">
+                <NuxtLink to="/tickets" class="font-medium hover:underline">Voir tout &rarr;</NuxtLink>
             </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Total Tickets</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ tickets.length }}</dd>
-              </dl>
-            </div>
-          </div>
         </div>
       </div>
 
       <!-- Card 2: Open Tickets -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-500 p-6 text-white shadow-lg">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4">
+            <svg class="h-24 w-24 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            </svg>
+        </div>
+        <div class="relative">
+            <dt>
+                <p class="text-sm font-medium uppercase tracking-wider">Tickets Ouverts</p>
+            </dt>
+            <dd class="mt-2 flex items-baseline pb-6 sm:pb-7">
+                <p class="text-4xl font-semibold">{{ openTickets }}</p>
+            </dd>
+        </div>
+        <div class="absolute bottom-0 inset-x-0 bg-black bg-opacity-10 px-4 py-2">
+            <div class="text-sm">
+                <NuxtLink to="/tickets" class="font-medium hover:underline">Voir tout &rarr;</NuxtLink>
             </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Open Tickets</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ openTickets }}</dd>
-              </dl>
-            </div>
-          </div>
         </div>
       </div>
 
       <!-- Card 3: High Priority Tickets -->
-      <div class="bg-white overflow-hidden shadow rounded-lg">
-        <div class="p-5">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <svg class="h-6 w-6 text-orange-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-red-500 to-red-600 p-6 text-white shadow-lg">
+        <div class="absolute top-0 right-0 -mt-4 -mr-4">
+            <svg class="h-24 w-24 text-white opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            </svg>
+        </div>
+        <div class="relative">
+            <dt>
+                <p class="text-sm font-medium uppercase tracking-wider">Haute Priorité</p>
+            </dt>
+            <dd class="mt-2 flex items-baseline pb-6 sm:pb-7">
+                <p class="text-4xl font-semibold">{{ highPriorityTickets }}</p>
+            </dd>
+        </div>
+        <div class="absolute bottom-0 inset-x-0 bg-black bg-opacity-10 px-4 py-2">
+            <div class="text-sm">
+                <NuxtLink to="/tickets" class="font-medium hover:underline">Voir tout &rarr;</NuxtLink>
             </div>
-            <div class="ml-5 w-0 flex-1">
-              <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">High Priority</dt>
-                <dd class="text-3xl font-semibold text-gray-900">{{ highPriorityTickets }}</dd>
-              </dl>
-            </div>
-          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Recent Tickets -->
+    <div class="mt-12">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Tickets Récents</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul v-if="recentTickets.length > 0" class="divide-y divide-gray-200">
+                <li v-for="ticket in recentTickets" :key="ticket.id" class="px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 min-w-0 cursor-pointer" @click="router.push('/tickets')">
+                            <p class="text-sm font-medium text-indigo-600 truncate">{{ ticket.title }}</p>
+                            <p class="mt-1 text-sm text-gray-500">Créé le: {{ formatDate(ticket.createdAt) }}</p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0">
+                            <span :class="statusClass(ticket.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                {{ ticket.status }}
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div v-else class="p-6 text-center text-gray-500">
+                <p v-if="!tickets.length">Aucun ticket pour le moment.</p>
+                <p v-else>Aucun ticket récent à afficher.</p>
+            </div>
+        </div>
     </div>
   </div>
 </template>
@@ -124,7 +159,32 @@ const openTickets = computed(() => {
   return tickets.value.filter(t => t.status === 'OPEN').length
 })
 
+const recentTickets = computed(() => {
+  return [...tickets.value]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5)
+})
+
 const highPriorityTickets = computed(() => {
   return tickets.value.filter(t => t.priority === 'HIGH' || t.priority === 'CRITICAL').length
 })
+
+const statusClass = (status) => {
+  const classes = {
+    'OPEN': 'bg-yellow-100 text-yellow-800',
+    'IN_PROGRESS': 'bg-blue-100 text-blue-800',
+    'RESOLVED': 'bg-green-100 text-green-800',
+    'CLOSED': 'bg-gray-100 text-gray-800'
+  }
+  return classes[status] || 'bg-gray-100 text-gray-800'
+}
+
+const formatDate = (date) => {
+  if (!date) return ''
+  return new Date(date).toLocaleDateString('fr-FR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+}
 </script>
