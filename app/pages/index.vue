@@ -7,6 +7,8 @@
       </template>
       <TicketForm @submit="handleCreateTicket" @cancel="closeCreateModal" />
     </Modal>
+   
+
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
       <div>
         <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -126,6 +128,14 @@ definePageMeta({
 const { tickets, fetchTickets, createTicket } = useTickets()
 const router = useRouter()
 const { $toast } = useNuxtApp()
+
+// authentication / profile
+const authStore = useAuthStore()
+const user = computed(() => authStore.user)
+const logout = () => {
+  authStore.logout()
+  router.push('/login')
+}
 
 onMounted(() => {
   fetchTickets()

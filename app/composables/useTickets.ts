@@ -8,6 +8,8 @@ export const useTickets = () => {
     id: string
     title: string
     description: string
+    // backend may return an attachments array when fetching single ticket
+    attachments?: Array<{ id: string; name: string; url: string }>
     [key: string]: any
   }
 

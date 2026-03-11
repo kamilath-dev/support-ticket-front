@@ -18,6 +18,17 @@
           <h3 class="text-lg font-bold text-gray-800">{{ viewingTicket.title }}</h3>
           <p class="mt-1 text-sm text-gray-600">{{ viewingTicket.description }}</p>
         </div>
+        <!-- attachments list -->
+        <div v-if="viewingTicket.attachments && viewingTicket.attachments.length" class="space-y-2">
+          <p class="font-semibold">Pièces jointes :</p>
+          <ul class="list-disc list-inside text-sm text-indigo-600">
+            <li v-for="file in viewingTicket.attachments" :key="file.id">
+              <a :href="file.url" target="_blank" class="underline hover:text-indigo-800">
+                {{ file.name }}
+              </a>
+            </li>
+          </ul>
+        </div>
         <div class="text-sm space-y-1">
           <p><span class="font-semibold">Priorité:</span> <span :class="priorityClass(viewingTicket.priority)" class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full">{{ viewingTicket.priority }}</span></p>
           <p><span class="font-semibold">Statut:</span> <span :class="statusClass(viewingTicket.status)" class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full">{{ viewingTicket.status }}</span></p>
@@ -152,7 +163,7 @@ const currentPage = ref(0)
 const totalPages = ref(1)
 const pageSize = ref(10)
 
-const { tickets, loading, fetchTickets, deleteTicket, createTicket, updateTicket } = useTickets()
+const { tickets, loading, fetchTickets, fetchTicketById, deleteTicket, createTicket, updateTicket } = useTickets()
 const { $toast, $api } = useNuxtApp()  // add $api for manual requests in this page
 
 // tiny debounce utility (could be replaced with lodash or vueuse)
@@ -250,8 +261,16 @@ const closeFormModal = () => {
   editingTicket.value = null
 }
 
-const openViewModal = (ticket) => {
-  viewingTicket.value = ticket
+const openViewModal = async (ticket) => {
+  // fetch full ticket details (including attachments) in case the list
+  // page didn't include them
+  try {
+    const full = await fetchTicketById(ticket.id)
+    viewingTicket.value = full
+  } catch (e) {
+    console.error('Failed to load ticket details', e)
+    viewingTicket.value = ticket
+  }
 }
 
 const closeViewModal = () => {

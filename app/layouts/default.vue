@@ -19,8 +19,15 @@
               </NuxtLink>
             </div>
           </div>
-          <div class="hidden sm:ml-6 sm:flex sm:items-center">
-            <!-- Logout Button -->
+          <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+            <!-- Profile info -->
+            <div v-if="user" class="flex items-center space-x-2">
+              <svg class="h-6 w-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+              <span class="text-sm font-medium text-gray-700">{{ user.username }}</span>
+            </div>
+            <!-- Logout Button remains on same line -->
             <button @click="handleLogout" type="button" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               <span class="sr-only">Log out</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -69,11 +76,16 @@
 
 <script setup>
 import { useAuth } from '~/composables/useAuth'
+import { useAuthStore } from '~/stores/auth'
 
 const isMobileMenuOpen = ref(false)
 const { logout } = useAuth()
 const { $toast } = useNuxtApp()
 const router = useRouter()
+
+// profile info
+const authStore = useAuthStore()
+const user = computed(() => authStore.user)
 
 const handleLogout = async () => {
   await logout()
