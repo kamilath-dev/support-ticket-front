@@ -279,7 +279,7 @@ const handleFormSubmit = async (formData) => {
   if (result.success) {
     $toast.success(`Ticket ${isEditing ? 'mis à jour' : 'créé'} avec succès!`)
     closeFormModal()
-    await fetchTickets()
+    await loadTickets()
   } else {
     $toast.error(`La ${isEditing ? 'mise à jour' : 'création'} du ticket a échoué: ${result.error}`)
   }

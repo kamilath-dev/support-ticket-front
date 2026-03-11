@@ -94,27 +94,25 @@
     <!-- Recent Tickets -->
     <div class="mt-12">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Tickets Récents</h2>
-        <div class="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul v-if="recentTickets.length > 0" class="divide-y divide-gray-200">
-                <li v-for="ticket in recentTickets" :key="ticket.id" class="px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors duration-200">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1 min-w-0 cursor-pointer" @click="router.push('/tickets')">
-                            <p class="text-sm font-medium text-indigo-600 truncate">{{ ticket.title }}</p>
-                            <p class="mt-1 text-sm text-gray-500">Créé le: {{ formatDate(ticket.createdAt) }}</p>
-                        </div>
-                        <div class="ml-4 flex-shrink-0">
-                            <span :class="statusClass(ticket.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                                {{ ticket.status }}
-                            </span>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div v-else class="p-6 text-center text-gray-500">
-                <p v-if="!tickets.length">Aucun ticket pour le moment.</p>
-                <p v-else>Aucun ticket récent à afficher.</p>
-            </div>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md p-6">
+      <div v-if="recentTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-for="ticket in recentTickets" :key="ticket.id" class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transform hover:-translate-y-1 transition-transform duration-300">
+          <div class="p-6 flex-grow cursor-pointer" @click="router.push('/tickets')">
+            <h3 class="text-base font-bold text-gray-800 truncate" :title="ticket.title">{{ ticket.title }}</h3>
+            <p class="mt-2 text-sm text-gray-500">Créé le : {{ formatDate(ticket.createdAt) }}</p>
+          </div>
+          <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+            <span :class="statusClass(ticket.status)" class="px-2 inline-flex text-xs leading-4 font-semibold rounded-full">
+              {{ ticket.status }}
+            </span>
+          </div>
         </div>
+      </div>
+      <div v-else class="p-6 text-center text-gray-500">
+        <p v-if="!tickets.length">Aucun ticket pour le moment.</p>
+        <p v-else>Aucun ticket récent à afficher.</p>
+      </div>
+    </div>
     </div>
   </div>
 </template>
